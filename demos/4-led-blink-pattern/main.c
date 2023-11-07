@@ -15,7 +15,7 @@ int main(void) {
 }
 
 // global state vars that control blinking
-int blinkGreenLimit = 7;  // duty cycle = 1/blinkLimit
+int blinkGreenLimit = 15;  // duty cycle = 1/blinkLimit
 int blinkRedLimit = 0;  // duty cycle = 1/blinkLimit  
 int blinkGreenCount = 0;  // cycles 0...blinkLimit-1
 int blinkRedCount = 0; // cycles 0...blinkLimit-1
@@ -45,13 +45,13 @@ __interrupt_vec(WDT_VECTOR) WDT()	/* 250 interrupts/sec */
 
   // measure a second
   secondCount ++;
-  if (secondCount >= 250/4) {  // once each second
+  if (secondCount >= 250/10) {  // once each second
     secondCount = 0;
     blinkGreenLimit --;	     // increase duty cycle
     blinkRedLimit ++;        // decrease duty cycle
     if (blinkGreenLimit <= 0)     // but don't let duty cycle go below 1/7.
-      blinkGreenLimit = 7;
-    if (blinkRedLimit >= 8)
+      blinkGreenLimit = 14;
+    if (blinkRedLimit >= 15)
       blinkRedLimit = 0;
   }
 } 

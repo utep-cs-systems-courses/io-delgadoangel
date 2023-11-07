@@ -14,8 +14,8 @@ install:
 	cd timerLib && make install
 
 #additional rules for files
-toy.elf: ${COMMON_OBJECTS} main.o state_machines.o led.o interrupt_handler.o ../lib/libTimer.a
-	${CC} ${CFLAGS} ${LDFLAGS} -o $@ $^
+toy.elf: ${COMMON_OBJECTS} main.o state_machines.o led.o interrupt_handler.o
+	${CC} ${CFLAGS} ${LDFLAGS} -o $@ $^ lib/libTimer.a
 
 load: toy.elf
 	msp430loader.sh toy.elf

@@ -14,8 +14,8 @@ install:
 	cd timerLib && make install
 
 #additional rules for files
-toy.elf: ${COMMON_OBJECTS} main.o state_machines.o led.o interrupt_handler.o ../lib/libTimer.a
-	${CC} ${CFLAGS} ${LDFLAGS} -o $@ $^
+toy.elf: ${COMMON_OBJECTS} main.o state_machines.o led.o switches.o buzzer.o interrupt_handler.o 
+	${CC} ${CFLAGS} ${LDFLAGS} -o $@ $^ ../lib/libTimer.a
 
 load: toy.elf
 	msp430loader.sh toy.elf
@@ -26,6 +26,11 @@ clean:
 
 led.o: led.c led.h
 
-interrupt_handler.o: stateMachines.h
+switches.c: switches.h
 
-stateMachines.o: led.h stateMachines.h
+buzzer.c: buzzer.h
+
+interrupt_handler.o: state_machines.h
+
+stateMachines.o: led.h buzzer.h state_machines.h
+BB

@@ -1,6 +1,7 @@
 #include <msp430.h>
 #include "switches.h"
 #include "led.h"
+#include "state_machines.h"
 
 char switch_state_down, switch_state_changed; /* effectively boolean */
 
@@ -22,7 +23,6 @@ switch_init()			/* setup switch */
   P1OUT |= SWITCHES;		/* pull-ups for switches */
   P1DIR &= ~SWITCHES;		/* set switches' bits for input */
   switch_update_interrupt_sense();
-  led_update();
 }
 
 void
@@ -31,5 +31,5 @@ switch_interrupt_handler()
   char p1val = switch_update_interrupt_sense();
   switch_state_down = (p1val & SW1) ? 0 : 1; /* 0 when SW1 is up */
   switch_state_changed = 1;
-  led_update();
+  switchJump();
 }

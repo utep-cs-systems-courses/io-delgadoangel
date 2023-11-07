@@ -1,8 +1,10 @@
 #include <msp430.h>
 #include "state_machines.h"
 #include "led.h"
+#include "switches.h"
 
 // blink state machine
+static int jumpStateMachine = 0;
 static int blinkCount = 0; // state var representing blink state
 static int blinkLimit = 0;   //  state var representing reciprocal of duty cycle
 static int reduce = 0;
@@ -24,7 +26,7 @@ void blinkUpdate() // called every 1/250s to blink with duty cycle 1/blinkLimit
 void oncePerTimePeriod() // repeatedly start bright and gradually lower duty cycle, one step/sec
 {
   if (reduce) {
-    blinkLimit --;  // increase duty                                                                                                             
+    blinkLimit --;  // increase duty                                                                                                        
     if (blinkLimit <= 0)
       reduce = 0;
   } else {
@@ -35,20 +37,52 @@ void oncePerTimePeriod() // repeatedly start bright and gradually lower duty cyc
   }
 }
 
-
-
-void timeUpdate()  // called every 1/250 sec to call oncePerSecond once per second
+void timeUpdate()  // called every 1/250 sec
 {
   static int timeCount = 0; // state variable representing repeating time in 1/20 steps
   timeCount ++;
-  if (timeCount >= 125/10) { // once each 1/20 of a second
+  if (timeCount >= 250/20) { // once each 1/20 of a second
     timeCount = 0;
     oncePerTimePeriod();
   }
 }
 
+void oncePerSecond() // called every second
+{
+  if (red_on) {
+    red_on = 0;
+    green_on = 1;
+  } else {
+    red_on = 1;
+    green_on = 0;
+  }
+  
+  led_update();
+}
+
+void secondUpdate()  // called every 1/250 sec to call oncePerSecond once per second                                             
+{
+  static int secondCount = 0; // state variable representing repeating time 0…1s                                                 
+  secondCount ++;
+  if (secondCount >= 250) { // once each second                                                                                  
+    secondCount = 0;
+    oncePerSecond();
+  }
+} 
+
+void switchJump(){
+  if (switch_state_changed) {
+    jumpStateMachine = switch_state_down; // Setting a different state machine
+  }
+  switch_state_changed = 0;
+}
+
 void timeAdvStateMachines() // called every 1/250 sec
 {
-  blinkUpdate();
-  timeUpdate();
+  if (jumpStateMachine) {
+    secondUpdate();
+  } else {
+    blinkUpdate();
+    timeUpdate();
+  }
 }

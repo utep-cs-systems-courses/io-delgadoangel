@@ -33,4 +33,3 @@ buzzer.c: buzzer.h
 interrupt_handler.o: state_machines.h
 
 stateMachines.o: led.h buzzer.h state_machines.h
-BB

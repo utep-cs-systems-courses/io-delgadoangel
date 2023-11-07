@@ -3,10 +3,10 @@
 #include "led.h"
 
 // blink state machine
+static int blinkCount = 0; // state var representing blink state
 static int blinkLimit = 0;   //  state var representing reciprocal of duty cycle 
 void blinkUpdate() // called every 1/250s to blink with duty cycle 1/blinkLimit
 {
-  static int blinkCount = 0; // state var representing blink state
   blinkCount ++;
   if (blinkCount >= blinkLimit) {
     blinkCount = 0;
@@ -30,10 +30,11 @@ void timeUpdate()  // called every 1/250 sec to call oncePerSecond once per seco
 {
   static int timeCount = 0; // state variable representing repeating time in 1/20 steps
   timeCount ++;
-  if (timeCount >= 125/10) { // once each second
+  if (timeCount >= 125/10) { // once each 1/20 of a second
     timeCount = 0;
     oncePerTimePeriod();
-  } }
+  }
+}
 
 void timeAdvStateMachines() // called every 1/250 sec
 {

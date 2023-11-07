@@ -11,7 +11,7 @@ AS              = msp430-elf-as
 all:	toy.elf
 
 install:
-	cd timerLib && make install
+	cd ../timerLib/ && make install
 
 #additional rules for files
 toy.elf: ${COMMON_OBJECTS} main.o state_machines.o led.o switches.o buzzer.o interrupt_handler.o 
@@ -22,7 +22,7 @@ load: toy.elf
 
 clean:
 	rm -f *.o *.elf
-	rm -rf h lib
+	cd .. && rm -rf h lib
 
 led.o: led.c led.h
 

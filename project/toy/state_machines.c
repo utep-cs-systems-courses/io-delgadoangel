@@ -2,12 +2,14 @@
 #include "state_machines.h"
 #include "led.h"
 #include "switches.h"
+#include "buzzer.h"
 
 // blink state machine
 static int jumpStateMachine = 0;
 static int blinkCount = 0; // state var representing blink state
 static int blinkLimit = 0;   //  state var representing reciprocal of duty cycle
 static int reduce = 0;
+
 void blinkUpdate() // called every 1/250s to blink with duty cycle 1/blinkLimit
 {
   blinkCount ++;
@@ -64,13 +66,34 @@ void secondUpdate()  // called every 1/250 sec to call oncePerSecond once per se
 {
   static int secondCount = 0; // state variable representing repeating time 0…1s                                                 
   secondCount ++;
-  if (secondCount >= 250) { // once each second                                                                                  
+  if (secondCount >= 250) { // once each second                                                                               
     secondCount = 0;
     oncePerSecond();
   }
-} 
+}
+void buzzerUpdate()
+{
+  static int note = 1;
+  if (note >= 4)
+    note = 0;
+    
+  buzzer_set_period(song_a[note]);
+  note ++;
+}
 
-void switchJump(){
+void buzzerTimeUpdate() // called every 1/250 sec to call oncePerSecond once per second
+{
+  static int buzzTimeCount = 0;
+  buzzTimeCount ++;
+  if (buzzTimeCount >= 300) {
+    buzzTimeCount = 0;
+    buzzerUpdate();
+  }
+}
+    
+
+void switchJump()
+{
   if (switch_state_changed) {
     jumpStateMachine = switch_state_down; // Setting a different state machine
   }
@@ -81,8 +104,10 @@ void timeAdvStateMachines() // called every 1/250 sec
 {
   if (jumpStateMachine) {
     secondUpdate();
+    buzzer_set_period(0);
   } else {
     blinkUpdate();
     timeUpdate();
+    buzzerTimeUpdate();
   }
 }

@@ -2,6 +2,7 @@
 #include "libTimer.h"
 #include "buzzer.h"
 
+const short int song_a[4] = {675, 716, 803, 955};
 void buzzer_init()
 {
     /* 
@@ -16,6 +17,8 @@ void buzzer_init()
     P2SEL &= ~BIT7; 
     P2SEL |= BIT6;
     P2DIR = BIT6;		/* enable output to speaker (P2.6) */
+
+    buzzer_set_period(song_a[0]);
 }
 
 void buzzer_set_period(short cycles) /* buzzer clock = 2MHz.  (period of 1k results in 2kHz tone) */
